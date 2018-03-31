@@ -17,25 +17,28 @@ def getData(data):
     return data_separation
 
 def calc_diff_and_norm(m,dp,c):
-    print m.shape
-    r = (np.subtract(m[:,0],m[:,1])).T
-    #print r.size
-    f = r.copy()
-    out = m.copy()
+    #print m.shape
+    normalized = np.zeros((db,0))
+    difference = (np.subtract(m[:,0],m[:,1])).T
 
-    for j in range(4):
-        for i in range(c):
-            minval = np.min(f[j*i*dp:(i+1)*dp*(j+1)])
-            f[j*i*dp:(i+1)*dp*(j+1)] = np.subtract(f[j*i*dp:(i+1)*dp*(j+1)],minval)
+    for i in range((c*2)-1):
+        norm = difference[i*dp:(i+1)*dp,:]
+        norm = np.subtract(norm, norm.min())
+        normalized = np.hstack((normalized, norm))
 
-    #print r
-    #print f
-    #print out
-    m[:,:-1] = r
-    m[:,:-1] = f
+    # for j in range(4):
+    #     for i in range(c):
+    #         minval = np.min(f[j*i*dp:(i+1)*dp*(j+1)])
+    #         norms[:,j] = np.subtract(f[j*i*dp:(i+1)*dp*(j+1)],minval)
 
-    return m
+    # m[:,:-1] = r
+    # m[:,:-1] = f
 
+    return m, norms
+
+def gen_mean_matrix(mm, idx, diff):
+    
+    return
 
 """Collect command-line options in a dictionary"""
 
@@ -66,7 +69,14 @@ if __name__ == '__main__':
     # obtain matrices by iterating over it
     matrices = getData(data)
     # calculate differences and the normalize differences
-    differencen, normalized = calc_diff_and_norm(matrices, data_points, comets)
-    #
+    diffNorm = calc_diff_and_norm(matrices, data_points, comets)
+    # indices of min val
+    indices = [np.argmin(v) for v in diffNorm]
+    # discard data if necessary
+
+    # generate mean matrix
+    mean_matrix = np.zeros((data_points, comets*2))
+    mean_matrix = gen_mean_matrix(mean_matrix, indices, diffNorm)
 
     #print matrices[1:size]
+    
