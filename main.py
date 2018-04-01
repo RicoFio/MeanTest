@@ -26,15 +26,7 @@ def calc_diff_and_norm(m,dp,c):
         norm = np.subtract(norm, norm.min())
         normalized = np.hstack((normalized, norm))
 
-    # for j in range(4):
-    #     for i in range(c):
-    #         minval = np.min(f[j*i*dp:(i+1)*dp*(j+1)])
-    #         norms[:,j] = np.subtract(f[j*i*dp:(i+1)*dp*(j+1)],minval)
-
-    # m[:,:-1] = r
-    # m[:,:-1] = f
-
-    return m, norms
+    return difference, normalized
 
 def gen_mean_matrix(mm, idx, diff):
     
@@ -69,14 +61,18 @@ if __name__ == '__main__':
     # obtain matrices by iterating over it
     matrices = getData(data)
     # calculate differences and the normalize differences
-    diffNorm = calc_diff_and_norm(matrices, data_points, comets)
+    difference, normalized = calc_diff_and_norm(matrices, data_points, comets)
     # indices of min val
-    indices = [np.argmin(v) for v in diffNorm]
+    indices = [np.argmax(v) for v in normalized.T]
     # discard data if necessary
-
+    max_val_first_group = np.argmax(normalized[:,0:comets])
+    if max_val_first_group < 100 or max_val_first_group > 250 :
+        print "Sorry, this data set cannot be regarded"
+        return 0
     # generate mean matrix
-    mean_matrix = np.zeros((data_points, comets*2))
-    mean_matrix = gen_mean_matrix(mean_matrix, indices, diffNorm)
+    mean_matrix = normalized.copy()
+    mean_matrix = gen_mean_matrix(mean_matrix, indices, normalized)
+
 
     #print matrices[1:size]
     
