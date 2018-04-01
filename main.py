@@ -13,7 +13,7 @@ def getData(data):
     	    #print new_data
             data_separation = np.vstack([data_separation,new_data])
     	    #print "added"
-
+        
     return data_separation
 
 def calc_diff_and_norm(m,dp,c):
@@ -29,7 +29,8 @@ def calc_diff_and_norm(m,dp,c):
     return difference, normalized
 
 def gen_mean_matrix(mm, idx, diff):
-    
+    # first we look how much space there is above and below the max value
+
     return
 
 """Collect command-line options in a dictionary"""
@@ -52,11 +53,7 @@ if __name__ == '__main__':
     wb = load_workbook(filename = file)
     # retrieve number of comets
     comets = int(myargs['-c'])
-    # retrieve number of datapoints
-    data_points = int(myargs['-dp'])
     # retrieve first sheet name
-    sheet_name = wb.sheetnames[0]
-    # load data from sheet
     data = wb.active
     # obtain matrices by iterating over it
     matrices = getData(data)
@@ -67,12 +64,11 @@ if __name__ == '__main__':
     # discard data if necessary
     max_val_first_group = np.argmax(normalized[:,0:comets])
     if max_val_first_group < 100 or max_val_first_group > 250 :
-        print "Sorry, this data set cannot be regarded"
-        return 0
+        print "Sorry, this data set cannot be regarded."
+        return
     # generate mean matrix
     mean_matrix = normalized.copy()
     mean_matrix = gen_mean_matrix(mean_matrix, indices, normalized)
 
 
     #print matrices[1:size]
-    
